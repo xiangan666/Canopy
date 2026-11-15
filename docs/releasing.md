@@ -6,6 +6,8 @@
 
 维护者使用 Windows、受支持的 Node.js / npm、PowerShell 7、Git 与 [GitHub CLI](https://cli.github.com/)，并使用已有登录态。不要将令牌写入仓库或命令日志。GitHub Actions 默认 `contents: read`，只有发布 job 使用 `contents: write`；工作流中的远程 Actions 固定到核实过的完整提交 SHA，Dependabot 负责提出后续更新。
 
+仓库已启用 secret scanning、push protection 与依赖漏洞告警，合并后的主题分支自动删除。`Protect main history` 规则禁止删除默认分支和非快进强推；`Protect version tags` 规则禁止更新或删除 `v*` 标签。当前不要求外部人员批准个人维护者的 PR；发布前仍须按本流程核对对应提交的 CI 结果。这些是仓库设置，迁移或复制源码时需要在新仓库重新配置。
+
 普通维护、文档与构建整理默认升 PATCH，公共功能新增升 MINOR，不兼容变更升 MAJOR。每轮实际修改都必须发布；连续编辑、验证修正和发布准备合并为同一版本。历史本地工作版本没有已知发布日期时保留真实说明，不伪造旧 Release。
 
 ## 准备候选提交
