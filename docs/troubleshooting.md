@@ -14,7 +14,7 @@
 
 ## 资源包模块 UUID 冲突
 
-原始本地化工作版本的资源模块 UUID 与行为包头 UUID 重复。1.6.4 为资源模块分配独立 UUID，保留两个包头 UUID。确认同时升级两个包，并检查世界中没有混用同 UUID 的上游版或旧缓存。包头与模块唯一性约定见 [Minecraft 官方清单参考](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable)。
+原始本地化工作版本的资源模块 UUID 与行为包头 UUID 重复。1.6.5 为资源模块分配独立 UUID，保留两个包头 UUID。确认同时升级两个包，并检查世界中没有混用同 UUID 的上游版或旧缓存。包头与模块唯一性约定见 [Minecraft 官方清单参考](https://learn.microsoft.com/en-us/minecraft/creator/reference/content/addonsreference/packmanifest?view=minecraft-bedrock-stable)。
 
 ## 中文键或占位符检查失败
 

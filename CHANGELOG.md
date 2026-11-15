@@ -4,11 +4,12 @@
 
 ## [Unreleased]
 
-## [1.6.4] - 2026-11-15
+## [1.6.5] - 2026-11-15
 
 ### Added
 
 - 新增统一版本事实源、版本同步命令、工程回归测试、CI 与 GitHub 标签发布入口。
+- 新增发布流程回归测试，覆盖草稿发现、已有草稿恢复、重复执行、查询故障和下载损坏拦截。
 - 为公开维护仓库启用凭证扫描、推送保护和依赖漏洞告警，保护默认分支历史与版本标签。
 - 提供安装升级、回退、架构、测试、故障排查与发布文档，以及问题和 PR 模板。
 - 发行包补充使用说明与 jsep v1.4.0 的原始 MIT 许可；Release 提供可导入包、完整源码归档及 SHA-256 摘要。
@@ -22,8 +23,14 @@
 
 ### Fixed
 
+- 修复草稿发布后按标签查询返回 404 的问题，使用 GitHub CLI 查找草稿并按发布 ID 读取元数据，避免误判和重复创建。
 - 修复资源包模块 UUID 与行为包包头 UUID 重复的问题，保持两个包的头部 UUID 不变以兼容已有世界引用。
 - 移除 rideable 实体中未启用的 JSON 注释，使全部资源可使用严格 JSON 工具检查；不改变实体配置值。
+
+## 1.6.4（未正式发布的候选版本）
+
+- 标签 `v1.6.4` 已保留；发布工作流在草稿查询阶段失败，没有完成正式发布。
+- 本轮工程整理及发布修复统一由 1.6.5 交付，不移动或复用已有版本标签。
 
 ## 1.6.3-zh_CN（历史本地工作版本，发布日期未记录）
 
@@ -36,5 +43,5 @@
 
 此前工作目录未维护 Git 标签与 GitHub Releases，因此不为历史工作版本虚构发布日期或 Release 链接。
 
-[Unreleased]: https://github.com/xiangan666/Canopy/compare/v1.6.4...HEAD
-[1.6.4]: https://github.com/xiangan666/Canopy/releases/tag/v1.6.4
+[Unreleased]: https://github.com/xiangan666/Canopy/compare/v1.6.5...HEAD
+[1.6.5]: https://github.com/xiangan666/Canopy/releases/tag/v1.6.5

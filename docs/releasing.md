@@ -46,7 +46,7 @@ gh run list --workflow release.yml --limit 5
 1. 要求工作区干净，版本、当前提交、本地标签和远程标签一致。
 2. 构建 `.mcaddon`，从候选提交执行 `git archive` 生成完整源码归档。
 3. 从对应 CHANGELOG 版本节生成发布说明，计算两个发行文件的 `SHA256SUMS.txt`。
-4. 使用已存在的远程标签创建草稿（`--verify-tag`），上传三个资产，下载后核对名称、大小、SHA-256 和可用的 GitHub digest。
+4. 通过 GitHub CLI 发现同标签的草稿或正式版本，再按发布 ID 获取元数据。不存在时使用远程已有标签创建草稿（`--verify-tag`），上传三个资产，下载后核对名称、大小、SHA-256 和可用的 GitHub digest。
 5. 正式发布为稳定版并显式标记 latest，再次下载核对。启用不可变发布的仓库还执行 `gh release verify`。
 
 预期资产为 `Canopy-vX.Y.Z-zh_CN.mcaddon`、`Canopy-vX.Y.Z-zh_CN-source.zip`、`SHA256SUMS.txt`。源码归档含 README、许可证、文档、工具和测试，不包含 `.git`、本地原始上游安装包、缓存或凭证；没有 Git LFS、子模块或需额外下载的 npm 构建依赖。发行资产的实际内容与摘要才是验收证据，GitHub 自动源码链接是补充。
@@ -60,13 +60,13 @@ CI 失败时修复根因并重跑受影响检查；不要降低门槛。首次�
 在 Actions 的 Release 页面选择 Run workflow，输入已存在的标签，可以恢复该标签的发布。也可用 PowerShell 和 GitHub CLI：
 
 ```powershell
-gh workflow run release.yml -f tag=v1.6.4
+gh workflow run release.yml -f tag=v1.6.5
 ```
 
 本地诊断或明确需要恢复时，可在已经检出的干净标签上调用同一个入口，而不是另建第二套发布流程：
 
 ```powershell
-pwsh -NoProfile -File .\tools\publish.ps1 -Tag v1.6.4
+pwsh -NoProfile -File .\tools\publish.ps1 -Tag v1.6.5
 ```
 
 资产核对不符时保持草稿并排查，不将草稿描述为正式版本。已发布版本的问题通过下一个版本修复，不删除历史、不重用同名标签。远程标签存在但需要更换候选时，应保留标签并选择新的版本，不能强制改写。

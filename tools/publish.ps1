@@ -21,10 +21,17 @@ function Invoke-Native([string]$command, [string[]]$arguments) {
 }
 
 function Get-Release {
-    $result = & gh api "repos/$Repository/releases/tags/$Tag" 2>&1
-    if ($LASTEXITCODE -eq 0) { return ($result -join "`n" | ConvertFrom-Json) }
-    if (($result -join "`n") -match 'HTTP 404') { return $null }
-    throw "Cannot inspect release: $($result -join ' ')"
+    # The tag REST endpoint omits drafts. The CLI also finds unpublished releases.
+    $result = & gh release view $Tag --repo $Repository --json databaseId 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        $message = ($result -join "`n").Trim()
+        if ($message -ceq 'release not found') { return $null }
+        throw "Cannot inspect release: $message"
+    }
+    $releaseId = (($result -join "`n") | ConvertFrom-Json).databaseId
+    if ("$releaseId" -notmatch '^[1-9][0-9]*$') { throw 'GitHub CLI returned an invalid release ID.' }
+    $details = Invoke-Native gh @('api', "repos/$Repository/releases/$releaseId")
+    return (($details -join "`n") | ConvertFrom-Json)
 }
 
 function Assert-Assets($release, [System.IO.FileInfo[]]$assets) {

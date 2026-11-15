@@ -1,6 +1,6 @@
 {
   "name": "canopy-zh-cn",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "private": true,
   "description": "Canopy 简体中文本地化维护版，基于 ForestOfLight/Canopy v1.6.3",
   "type": "module",

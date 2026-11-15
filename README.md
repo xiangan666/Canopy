@@ -5,7 +5,7 @@
 
 面向《我的世界》国际基岩版技术生存、红石测试和服务器维护的扩展包。本仓库维护 Canopy 的简体中文语言资源与原有中文运行反馈，保留上游的命令、规则、行为包和资源包结构。
 
-- 本地化维护版本：**1.6.4**；版本事实源为 [package.json](package.json)。
+- 本地化维护版本：**1.6.5**；版本事实源为 [package.json](package.json)。
 - 上游基线：[ForestOfLight/Canopy v1.6.3](https://github.com/ForestOfLight/Canopy)。本仓库的版本独立递增，不表示上游已经发布同名版本。
 - 成熟度：社区维护版；自动检查覆盖源码与发行包，游戏内兼容性需在匹配的客户端或服务端中验证。
 - 本地化维护者：姓名 **相安**；邮箱 **[3199912548@qq.com](mailto:3199912548@qq.com)**。
@@ -17,8 +17,8 @@
 
 | 资产 | 用途 |
 | --- | --- |
-| `Canopy-v1.6.4-zh_CN.mcaddon` | 推荐给玩家，直接导入游戏 |
-| `Canopy-v1.6.4-zh_CN-source.zip` | 完整源码、使用说明与开发工具 |
+| `Canopy-v1.6.5-zh_CN.mcaddon` | 推荐给玩家，直接导入游戏 |
+| `Canopy-v1.6.5-zh_CN-source.zip` | 完整源码、使用说明与开发工具 |
 | `SHA256SUMS.txt` | 校验下载的两个发行文件 |
 
 1. 备份准备使用的世界，用国际基岩版打开 `.mcaddon` 并等待导入完成。
@@ -67,7 +67,7 @@ npm run build
 powershell.exe -NoProfile -File .\tools\build.ps1
 ```
 
-产物为 `dist/Canopy-v1.6.4-zh_CN.mcaddon` 和同名 `.mcaddon.sha256`。也可通过 `-OutputPath` 指定 `.mcaddon` 输出路径；输出不能位于 `source/` 中。构建使用临时文件，完成验证后替换目标；验证失败会保留已有产物。仓库根目录原有的 `Canopy-v1.6.3.mcaddon` 不参与构建与上传。
+产物为 `dist/Canopy-v1.6.5-zh_CN.mcaddon` 和同名 `.mcaddon.sha256`。也可通过 `-OutputPath` 指定 `.mcaddon` 输出路径；输出不能位于 `source/` 中。构建使用临时文件，完成验证后替换目标；验证失败会保留已有产物。仓库根目录原有的 `Canopy-v1.6.3.mcaddon` 不参与构建与上传。
 
 检查覆盖以下内容：
 
