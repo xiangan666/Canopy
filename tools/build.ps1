@@ -1,121 +1,116 @@
+#requires -Version 5.1
 [CmdletBinding()]
 param(
     [string]$OutputPath = ''
 )
 
 $ErrorActionPreference = 'Stop'
-
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
+$sourceRoot = Join-Path $projectRoot 'source'
+
+# Node is mandatory: an unavailable validator must never produce a successful build.
+$node = Get-Command node -ErrorAction Stop
+$nodeMajor = [int]((& $node.Source --version).TrimStart('v').Split('.')[0])
+if ($LASTEXITCODE -ne 0 -or $nodeMajor -notin @(22, 24, 26)) {
+    throw 'Node.js 22, 24 or 26 is required.'
+}
+$package = Get-Content -LiteralPath (Join-Path $projectRoot 'package.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 
 if ([string]::IsNullOrWhiteSpace($OutputPath)) {
-    $OutputPath = Join-Path $projectRoot 'dist/Canopy-v1.6.3-zh_CN.mcaddon'
+    $OutputPath = Join-Path $projectRoot "dist/Canopy-v$($package.version)-zh_CN.mcaddon"
 }
-
-$sourceRoot = Join-Path $projectRoot 'source'
-$behaviorRoot = Join-Path $sourceRoot 'Canopy[BP]'
-$resourceRoot = Join-Path $sourceRoot 'Canopy[RP]'
-
-if (-not (Test-Path -LiteralPath $behaviorRoot -PathType Container) -or
-    -not (Test-Path -LiteralPath $resourceRoot -PathType Container)) {
-    throw 'source/Canopy[BP] and source/Canopy[RP] are required.'
-}
-
-function Read-LangKeys([string]$path) {
-    $keys = [System.Collections.Generic.List[string]]::new()
-    foreach ($line in Get-Content -LiteralPath $path -Encoding UTF8) {
-        if ($line -match '^\s*([^#\s][^=]*?)=') {
-            $keys.Add($matches[1].Trim())
-        }
-    }
-    return $keys
-}
-
-foreach ($manifest in @(
-    (Join-Path $behaviorRoot 'manifest.json'),
-    (Join-Path $resourceRoot 'manifest.json')
-)) {
-    Get-Content -LiteralPath $manifest -Raw -Encoding UTF8 | ConvertFrom-Json | Out-Null
-}
-
-$languageDirectory = Join-Path $resourceRoot 'texts'
-$languageFiles = @(Get-ChildItem -LiteralPath $languageDirectory -Filter '*.lang' -File)
-$allKeys = [System.Collections.Generic.HashSet[string]]::new()
-foreach ($languageFile in $languageFiles) {
-    $keys = Read-LangKeys $languageFile.FullName
-    $duplicates = @($keys | Group-Object -CaseSensitive | Where-Object Count -gt 1)
-    if ($duplicates.Count -gt 0) {
-        throw "Duplicate language keys in $($languageFile.Name): $($duplicates.Name -join ', ')"
-    }
-    foreach ($key in $keys) {
-        $null = $allKeys.Add($key)
-    }
-}
-
-$zhPath = Join-Path $languageDirectory 'zh_CN.lang'
-$zhKeys = [System.Collections.Generic.HashSet[string]]::new()
-foreach ($key in (Read-LangKeys $zhPath)) {
-    $null = $zhKeys.Add($key)
-}
-$missingKeys = @($allKeys | Where-Object { -not $zhKeys.Contains($_) } | Sort-Object)
-if ($missingKeys.Count -gt 0) {
-    throw "zh_CN.lang is missing $($missingKeys.Count) keys: $($missingKeys -join ', ')"
-}
-
-$javascriptFiles = @(Get-ChildItem -LiteralPath $sourceRoot -Recurse -Filter '*.js' -File)
-if (Get-Command node -ErrorAction SilentlyContinue) {
-    foreach ($javascriptFile in $javascriptFiles) {
-        & node --check $javascriptFile.FullName
-        if ($LASTEXITCODE -ne 0) {
-            throw "JavaScript syntax check failed: $($javascriptFile.FullName)"
-        }
-    }
-}
-
 $resolvedOutput = [System.IO.Path]::GetFullPath($OutputPath)
+if ([System.IO.Path]::GetExtension($resolvedOutput) -ne '.mcaddon') {
+    throw 'OutputPath must use the .mcaddon extension.'
+}
+$comparison = [System.StringComparison]::OrdinalIgnoreCase
+if ($resolvedOutput.StartsWith($sourceRoot + [System.IO.Path]::DirectorySeparatorChar, $comparison)) {
+    throw 'OutputPath must be outside source/.'
+}
+
+& $node.Source (Join-Path $PSScriptRoot 'validate.mjs')
+if ($LASTEXITCODE -ne 0) { throw 'Project validation failed. Existing build outputs were preserved.' }
+
 $outputDirectory = Split-Path -Parent $resolvedOutput
 [System.IO.Directory]::CreateDirectory($outputDirectory) | Out-Null
-if (Test-Path -LiteralPath $resolvedOutput) {
-    Remove-Item -LiteralPath $resolvedOutput -Force
+$temporaryOutput = Join-Path $outputDirectory ('.' + [System.IO.Path]::GetFileName($resolvedOutput) + '.' + [guid]::NewGuid().ToString('N') + '.tmp')
+$checksumPath = $resolvedOutput + '.sha256'
+$temporaryChecksum = $temporaryOutput + '.sha256'
+
+function Install-Output([string]$temporary, [string]$target) {
+    if (Test-Path -LiteralPath $target -PathType Leaf) {
+        [System.IO.File]::Replace($temporary, $target, [NullString]::Value)
+    } else {
+        [System.IO.File]::Move($temporary, $target)
+    }
 }
 
-# Windows PowerShell may not load the base ZipArchive assembly when only the
-# extension assembly is requested.
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
-$stream = [System.IO.File]::Open($resolvedOutput, [System.IO.FileMode]::CreateNew)
-$archive = [System.IO.Compression.ZipArchive]::new($stream, [System.IO.Compression.ZipArchiveMode]::Create)
 try {
-    foreach ($file in (Get-ChildItem -LiteralPath $sourceRoot -Recurse -File | Sort-Object FullName)) {
-        $relative = $file.FullName.Substring($sourceRoot.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
-        $entryName = $relative.Replace('\', '/')
-        if (-not ($entryName.StartsWith('Canopy[BP]/') -or $entryName.StartsWith('Canopy[RP]/'))) {
-            throw "Unexpected package path: $entryName"
+    $files = @(Get-ChildItem -LiteralPath $sourceRoot -Recurse -File -Force | Sort-Object FullName)
+    $stream = [System.IO.File]::Open($temporaryOutput, [System.IO.FileMode]::CreateNew)
+    $archive = $null
+    try {
+        $archive = [System.IO.Compression.ZipArchive]::new($stream, [System.IO.Compression.ZipArchiveMode]::Create)
+        foreach ($file in $files) {
+            $relative = $file.FullName.Substring($sourceRoot.Length).TrimStart([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+            $entryName = $relative.Replace('\', '/')
+            if (-not ($entryName.StartsWith('Canopy[BP]/') -or $entryName.StartsWith('Canopy[RP]/'))) {
+                throw "Unexpected package path: $entryName"
+            }
+            $entry = $archive.CreateEntry($entryName, [System.IO.Compression.CompressionLevel]::Optimal)
+            # Stable timestamps make repeated builds with the same inputs/runtime comparable.
+            $entry.LastWriteTime = [System.DateTimeOffset]::new(2000, 1, 1, 0, 0, 0, [System.TimeSpan]::Zero)
+            $inputStream = [System.IO.File]::OpenRead($file.FullName)
+            $entryStream = $null
+            try {
+                $entryStream = $entry.Open()
+                $inputStream.CopyTo($entryStream)
+            } finally {
+                if ($null -ne $entryStream) { $entryStream.Dispose() }
+                $inputStream.Dispose()
+            }
         }
-        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-            $archive,
-            $file.FullName,
-            $entryName,
-            [System.IO.Compression.CompressionLevel]::Optimal
-        ) | Out-Null
+    } finally {
+        if ($null -ne $archive) { $archive.Dispose() }
+        $stream.Dispose()
+    }
+
+    $zip = [System.IO.Compression.ZipFile]::OpenRead($temporaryOutput)
+    try {
+        $names = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+        foreach ($entry in $zip.Entries) {
+            if (-not $names.Add($entry.FullName) -or $entry.FullName.Contains('\') -or $entry.FullName.Contains('../') -or
+                -not ($entry.FullName.StartsWith('Canopy[BP]/') -or $entry.FullName.StartsWith('Canopy[RP]/'))) {
+                throw "Unsafe or duplicate archive entry: $($entry.FullName)"
+            }
+        }
+        if ($zip.Entries.Count -ne $files.Count) { throw 'Archive file count differs from source/.' }
+        foreach ($required in @('Canopy[BP]/manifest.json', 'Canopy[RP]/manifest.json', 'Canopy[BP]/scripts/main.js', 'Canopy[RP]/texts/zh_CN.lang', 'Canopy[BP]/scripts/lib/jsep/LICENSE')) {
+            if (-not $names.Contains($required)) { throw "Archive is missing: $required" }
+        }
+        $entryCount = $zip.Entries.Count
+    } finally {
+        $zip.Dispose()
+    }
+
+    $hashInput = [System.IO.File]::OpenRead($temporaryOutput)
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $hash = [System.BitConverter]::ToString($sha256.ComputeHash($hashInput)).Replace('-', '').ToLowerInvariant()
+    } finally {
+        $sha256.Dispose()
+        $hashInput.Dispose()
+    }
+    [System.IO.File]::WriteAllText($temporaryChecksum, "$hash  $([System.IO.Path]::GetFileName($resolvedOutput))`n", [System.Text.UTF8Encoding]::new($false))
+    Install-Output $temporaryOutput $resolvedOutput
+    Install-Output $temporaryChecksum $checksumPath
+    Write-Output "Built $resolvedOutput ($entryCount files)"
+    Write-Output "SHA256 $hash"
+    Write-Output "Checksum $checksumPath"
+} finally {
+    foreach ($temporary in @($temporaryOutput, $temporaryChecksum)) {
+        if (Test-Path -LiteralPath $temporary -PathType Leaf) { Remove-Item -LiteralPath $temporary -Force }
     }
 }
-finally {
-    $archive.Dispose()
-    $stream.Dispose()
-}
-
-$zip = [System.IO.Compression.ZipFile]::OpenRead($resolvedOutput)
-try {
-    $unexpected = @($zip.Entries | Where-Object {
-        -not ($_.FullName.StartsWith('Canopy[BP]/') -or $_.FullName.StartsWith('Canopy[RP]/'))
-    })
-    if ($unexpected.Count -gt 0) {
-        throw "Unexpected entries in output archive: $($unexpected.FullName -join ', ')"
-    }
-    $entryCount = $zip.Entries.Count
-}
-finally {
-    $zip.Dispose()
-}
-
-Write-Output "Built $resolvedOutput ($entryCount files)"

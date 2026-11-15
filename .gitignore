@@ -1,4 +1,13 @@
-dist/
+/dist/
+node_modules/
+*.mcaddon
+*.mcpack
 *.log
 *.tmp
-node_modules/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+Thumbs.db

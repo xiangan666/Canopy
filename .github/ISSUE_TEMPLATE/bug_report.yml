@@ -1,0 +1,29 @@
+name: 问题反馈
+description: 报告安装、运行、本地化或构建问题
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Canopy 版本
+      description: 同时填写行为包与资源包版本
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 环境
+      description: 游戏版本、平台、客户端或服务端；构建问题补充 Node.js 与 PowerShell 版本
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤、预期与实际结果
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 内容日志或构建日志
+      description: 只提供复现所需的片段，移除私人数据与凭证
+      render: text

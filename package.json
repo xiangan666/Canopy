@@ -1,0 +1,35 @@
+{
+  "name": "canopy-zh-cn",
+  "version": "1.6.4",
+  "private": true,
+  "description": "Canopy 简体中文本地化维护版，基于 ForestOfLight/Canopy v1.6.3",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "ForestOfLight"
+  },
+  "contributors": [
+    {
+      "name": "相安",
+      "email": "3199912548@qq.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiangan666/Canopy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xiangan666/Canopy/issues"
+  },
+  "homepage": "https://github.com/xiangan666/Canopy#readme",
+  "engines": {
+    "node": "^22.0.0 || ^24.0.0 || ^26.0.0",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "validate": "node tools/validate.mjs",
+    "test": "node --test",
+    "build": "pwsh -NoProfile -File tools/build.ps1",
+    "version": "node tools/sync-version.mjs"
+  }
+}
