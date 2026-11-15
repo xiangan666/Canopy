@@ -1,0 +1,77 @@
+{
+	"format_version": 2,
+	"header": {
+			"name": "Canopy 行为包 v1.6.3（简体中文）",
+			"description": "Canopy 技术信息与功能扩展包的简体中文本地化版本。原作者：ForestOfLight。",
+		"uuid": "7f6b23df-a583-476b-b0e4-87457e65f7c0",
+		"version": [
+			1,
+			6,
+			3
+		],
+		"min_engine_version": [
+			1,
+			26,
+			60
+		]
+	},
+	"modules": [
+		{
+			"description": "行为包模块",
+			"type": "data",
+			"uuid": "47787f93-ec3c-4b0c-95fb-55a70e029041",
+			"version": [
+				1,
+				0,
+				0
+			]
+		},
+		{
+			"description": "游戏测试脚本模块",
+			"type": "script",
+			"language": "javascript",
+			"entry": "scripts/main.js",
+			"uuid": "3d753132-e3c9-4305-a995-eae30b486093",
+			"version": [
+				1,
+				0,
+				0
+			]
+		}
+	],
+	"dependencies": [
+		{
+			"module_name": "@minecraft/server",
+			"version": "2.12.0-beta"
+		},
+		{
+			"module_name": "@minecraft/server-ui",
+			"version": "2.4.0-beta"
+		},
+		{
+			"module_name": "@minecraft/debug-utilities",
+			"version": "1.0.0-beta"
+		},
+		{
+			"module_name": "@minecraft/server-gametest",
+			"version": "1.0.0-beta"
+		},
+		{
+			"uuid": "bcf34368-ed0c-4cf7-938e-582cccf9950d",
+			"version": [
+				1,
+				6,
+				3
+			]
+		}
+	],
+	"metadata": {
+		"authors": [
+			"相安",
+			"ForestOfLight"
+		],
+		"license": "MIT",
+		"url": "https://github.com/ForestOfLight/Canopy",
+		"product_type": "addon"
+	}
+}

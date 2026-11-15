@@ -1,0 +1,660 @@
+## vanilla
+entity.canopy:rideable.name=Canopy 可骑乘实体
+action.hint.exit.canopy:rideable=潜行以站立
+
+## generic
+generic.welcome.start=§7当前服务器正在运行 §l§aCanopy§r §av%s§7. 输入 ./help 开始熟悉指令.§r
+generic.welcome.extensions=§7已加载扩展: 
+generic.player.notfound=§c玩家 '%s' 未找到.
+generic.target.notfound=§c目标未找到.
+generic.entity.notfound=§c实体未找到.
+generic.total=总数
+
+## commands
+commands.generic.unknown=§c无效的指令: '%1'. 输入"%2help" 获取更多信息.
+commands.generic.nopermission=§c你没有足够的权限使用这个指令.
+commands.generic.usage=§c使用方法: %s
+commands.generic.blocked.survival=§c此指令只能在创造模式或者旁观模式下使用.
+commands.generic.invalidsource=§c这个命令不能从这个来源执行.
+commands.generic.invalidaction=§c无效的操作. 使用 ./help <command> 获取更多信息.
+
+commands.help=显示指令帮助信息.
+commands.help.search.noresult=§c没有与此相关的结果: '%s'
+commands.help.search.results=§l§aCanopy§r §2指令帮助页面找到此结果 '§r%1§2':
+commands.help.page.header=§l§aCanopy§r§2 指令帮助 页数: §f%1
+commands.help.infodisplay=开关游戏中的信息显示.
+commands.help.rules=开关全局规则.
+commands.help.extension.rules=开关扩展 §a%s§2 的规则.
+commands.help.extension.commands=扩展 §a%s§2 的指令.
+
+commands.analyzearea=分析一个区域的方块, 并为JavaScript表达式显示结果.
+commands.analyzearea.overcapacity=§c指定区域内的方块过多 (>2^32 个方块).
+commands.analyzearea.loadcapacity=§c该区域跨越的区块过多 (超出常加载区域容量).
+commands.analyzearea.unknownerror=§c发生未知错误.
+commands.analyzearea.syntaxerror=§c无法解析该表达式.
+commands.analyzearea.forbidden=§c该表达式访问了不允许访问的属性或方法.
+commands.analyzearea.completed=§7找到 %1 个匹配的方块.
+commands.analyzearea.removed=§7已移除这些坐标的分析.
+commands.analyzearea.removenotfound=§c未找到这些坐标的分析.
+commands.analyzearea.create.invalid=§c请输入有效的坐标和表达式.
+commands.analyzearea.teleport.gamemode=§c传送到匹配点需要创造或旁观模式.
+commands.analyzearea.stats.header=§l§a区域分析§r
+commands.analyzearea.stats=§f%1 §7-> §f%2\n§f表达式: §7%3\n§f匹配: §a%4\n§f大小: §7%5
+commands.analyzearea.stats.capped=§f%1 §7-> §f%2\n§f表达式: §7%3\n§f匹配: §c%4+ (已达上限)\n§f大小: §7%5
+commands.analyzearea.stats.analyzing=§f%1 §7-> §f%2\n§f表达式: §7%3\n§f分析中... §e%4
+commands.analyzearea.ui.selector.title=§2区域分析
+commands.analyzearea.ui.selector.new=(+) 新建分析
+commands.analyzearea.ui.selector.empty=§7暂无分析.
+commands.analyzearea.ui.create.title=§2新建区域分析
+commands.analyzearea.ui.create.fromX=从 X
+commands.analyzearea.ui.create.fromY=从 Y
+commands.analyzearea.ui.create.fromZ=从 Z
+commands.analyzearea.ui.create.toX=到 X
+commands.analyzearea.ui.create.toY=到 Y
+commands.analyzearea.ui.create.toZ=到 Z
+commands.analyzearea.ui.create.dimension=维度
+commands.analyzearea.ui.create.expression=表达式
+commands.analyzearea.ui.create.submit=创建
+commands.analyzearea.ui.page.title=§2区域分析
+commands.analyzearea.ui.page.notrun=§7本会话尚未运行. 请点击重新分析.
+commands.analyzearea.ui.page.prev=< 上一个 <
+commands.analyzearea.ui.page.next=> 下一个 >
+commands.analyzearea.ui.page.reanalyze=重新分析
+commands.analyzearea.ui.page.enableboxes=显示匹配渲染
+commands.analyzearea.ui.page.disableboxes=隐藏匹配渲染
+commands.analyzearea.ui.page.remove=(-) 移除区域
+commands.analyzearea.ui.page.back=返回
+
+commands.biomeedges=在区域内查找并显示生物群系边界.
+commands.biomeedges.finderadded=§7正在分析生物群系边界...
+commands.biomeedges.finderremoved=§7已移除最近的生物群系边界区域.
+commands.biomeedges.findingstopped=§7已移除所有生物群系边界区域.
+commands.biomeedges.notfinding=§c当前没有生物群系边界区域.
+commands.biomeedges.missinglocations=§c请同时提供起点和终点位置.
+commands.biomeedges.overcapacity=§c指定区域内的方块过多. (%1 > %2)
+
+commands.butcher=立即从世界中移除选定的或你注视着的实体. (译注: 被移除的实体不会在移除时播放死亡动画或掉落物品.)
+commands.butcher.fail.player=§c不得移除玩家.
+commands.butcher.fail.noneremoved=§c没有实体被移除.
+commands.butcher.success=§7移除了 %1.
+commands.butcher.success.many=§7移除了 %1 个实体: 
+
+commands.camera=放置一个相机, 切换观看已放置的相机, 或切换生存友好的旁观模式.
+commands.camera.spectate=进入和退出生存友好的旁观模式. (快捷指令: cs)
+commands.camera.place.viewing=§c不能在监视过程中放置相机.
+commands.camera.place.success=§7相机放置在 %s.
+commands.camera.view.spectating=§c不能在旁观模式下进行相机监视.
+commands.camera.view.fail=§c还没放置过一个相机.
+commands.camera.view.dimension=§c请到 %s 去监视相机.
+commands.camera.view.started=§a监视中
+commands.camera.view.ended=§7监视结束
+commands.camera.spectate.viewing=§c不能在监视中进入旁观模式.
+commands.camera.spectate.gamemode=§c不能在特殊的旁观模式下变更游戏模式.
+commands.camera.spectate.started=§a旁观模式
+commands.camera.spectate.ended=§7退出旁观模式
+commands.camera.spectate.hardcore=§c已阻止你进入旁观模式. 在极限模式下进行旁观存在一个软锁定漏洞. 这是Mojang的问题.
+commands.camera.spectate.flying=§c你必须在地面上才可以进入旁观.
+commands.camera.invalidaction=§c无效相机行为.
+
+commands.canopy=设置规则的值.
+commands.canopy.version=显示Canopy的当前版本和所有载入的扩展.
+commands.canopy.version.message=§7当前服务器已加载 §l§aCanopy§r.
+commands.canopy.version.extensions=§7已加载的扩展: 
+commands.canopy.menu=显示菜单来切换规则.
+commands.canopy.menu.busy=§8关闭聊天窗口以访问UI窗口.
+commands.canopy.menu.timeout=§8窗口在 %s 个刻度后超时.
+commands.canopy.menu.canceled=§8更改已放弃(规则不会更新).
+commands.canopy.menu.submit=§a确认(提交)
+commands.canopy.single=修改单个规则的值.
+commands.canopy.infodisplayRule=§c规则 '%1' 是 信息显示 的一部分, 并且必须使用%2信息进行切换. 有关详细信息, 请使用%2帮助.
+
+commands.dimensionalteleport=传送你到指定的维度.
+commands.dimensionalteleport.notfound=§c无效的维度.
+commands.dimensionalteleport.success.coords=§7成功传送到坐标 %1 维度 %2.
+commands.dimensionalteleport.success=§7传送到维度 %s.
+commands.dimensionalteleport.fail.coords=§c无效的坐标. 请提供所有 x, y, z 数值或不提供任何数值.
+
+commands.claimprojectiles=改变半径内所有弹射物的拥有者.
+commands.claimprojectiles.fail.sourcenotplayer=§c请指定一个玩家来使用此命令.
+commands.claimprojectiles.fail.nonefound=§7半径(%s blocks)内, 没有弹射物.
+commands.claimprojectiles.success.self=§7成功将 %1 个弹射物(半径 %2 )的拥有者改为了你.
+commands.claimprojectiles.success.other=§7成功将 %1 个弹射物(半径 %2 )的拥有者改为了 %3.
+
+commands.cleanup=清除半径内所有的掉落物和经验球. (快捷指令: k)
+commands.cleanup.success=§7清除了 %1 个实体 (r%2).
+
+commands.counter=管理漏斗计数器. (快捷指令: ct)
+commands.counter.channel.notfound=§c无效的颜色: %s. 请使用羊毛方块的颜色之一.
+commands.counter.query=显示指定的颜色频道的漏斗计数和效率.
+commands.counter.query.all=显示所有漏斗计数器的计数和速率.
+commands.counter.query.empty=§7没有漏斗计数器在工作.
+commands.counter.query.channel=§7频道 %1§7 (%2%3 min.), 总数: §f%4§7, (§f%5§7):
+commands.counter.realtime=显示漏斗计数和效率(现实时间单位).
+commands.counter.mode=设置漏斗计数器的模式.
+commands.counter.mode.notfound=§c无效的模式: '%1'. 请使用以下的模式之一: %2
+commands.counter.mode.single=§7漏斗计数器 %1§7 模式: %2
+commands.counter.mode.single.actionbar=[%1] 设置 %2 漏斗计数器模式为 %3
+commands.counter.mode.all=§7所有漏斗计数器模式: %s
+commands.counter.mode.all.actionbar=[%1] 设置所有漏斗计数器模式为 %2
+commands.counter.reset=重置所有的漏斗计数器和计时器.
+commands.counter.reset.single=§7已重置计时器和计数器: %s
+commands.counter.reset.single.actionbar=[%1] 重置 %2 漏斗计数器.
+commands.counter.reset.all=§7所有的漏斗计数器和计时器已被重置.
+commands.counter.reset.all.actionbar=[%s] 重置了所有漏斗计数器.
+commands.counter.remove=删除指定频道中的所有漏斗.
+commands.counter.remove.single=§7已移除 %s 中的所有漏斗.
+commands.counter.remove.single.actionbar=[%1] 已移除 %2 中的所有漏斗
+commands.counter.remove.all=§7已移除所有频道中的所有漏斗.
+commands.counter.remove.all.actionbar=[%s] 已移除所有频道中的所有漏斗
+
+commands.data=显示你所指方块或者实体的信息.
+commands.data.notarget.id=§c没有于此id相配的实体 '%2'.
+commands.data.properties=§a性质:§r %s
+commands.data.states=§a状态:§r %s
+commands.data.components=§a元件:§r %s
+commands.data.tags=§a标签:§r %s
+commands.data.dynamicProperties=§a动态属性:§r %1 的总字节数: %2
+commands.data.effects=§a效果:§r %s
+commands.data.other=§a其他:§r 头部位置: %1, 旋转: [%2, %3], 速度: %4, 视角方向: %5, AABB: %6
+
+commands.debugentity=显示有关实体的调试信息.
+commands.debugentity.invalidProperty=§c调试属性无效.
+commands.debugentity.invalidAction=§c调试行为无效.
+commands.debugentity.added=§7为 %2 个实体添加了 '%1' 调试信息显示: 
+commands.debugentity.removed=§7为 %2 个实体删除了 '%1' 调试信息显示: 
+
+commands.distance=计算两点的距离. (快捷指令: d)
+commands.distance.target=计算你所指的方块或者实体与你的距离.
+commands.distance.fromto=计算两点的距离.
+commands.distance.from=保存位置用于计算距离.
+commands.distance.from.success=§7已保存位置: %s
+commands.distance.to=计算已保存的位置与指定位置之间的距离.
+commands.distance.to.fail.nosave=§c未保存位置. 保存一个位置用于计算: %s到 [x y z] 的距离
+commands.distance.target.notfound=§c没有找到方块或者实体用于计算距离.
+commands.distance.cartesian=§7几何距离: §r§l%s§r
+commands.distance.cylindrical=§7几何距离(XZ平面): §r§l%s§r
+commands.distance.manhattan=§7§7曼哈顿距离: §r§l%s§r
+
+commands.entitydensity=在所在维度寻找实体密集区域.
+commands.entitydensity.fail.noentities=§7没有找到实体密集区域 %s. 可能没有实体在这个维度?
+commands.entitydensity.fail.dimension=§c无效的维度参数. 请使用以下参数之一: %s
+commands.entitydensity.fail.gridsize=§c无效的网格大小. 请使用1到2048之间的整数. 建议使用: 100-1024.
+commands.entitydensity.success.header=§7实体密集区域在 %1 (网格大小 %2x%3):
+commands.entitydensity.success.area=§7-有 %1 个实体在 %2, %3
+
+commands.gamemode.s=已将你的游戏模式设为生存.
+commands.gamemode.a=已将你的游戏模式设为冒险.
+commands.gamemode.c=已将你的游戏模式设为创造.
+commands.gamemode.sp=已将你的游戏模式设为旁观.
+
+commands.generator=管理漏斗生成器. (快捷指令: gt)
+commands.generator.channel.notfound=§c无效颜色: %s. 请使用一种羊毛块颜色.
+commands.generator.query.all=显示所有漏斗生成器的计数和速率.
+commands.generator.query=显示指定颜色的漏斗生成器的计数和速率.
+commands.generator.query.empty=§7这里没有使用中的漏斗生成器.
+commands.generator.query.channel=§7已生成 %1 物品 在§7 (%2%3 min.), 共计: §f%4§7, (§f%5§7):
+commands.generator.realtime=基于真实世界时间(而非游戏时间)显示计数和速率.
+commands.generator.reset=重置所有漏斗生成器并重启计时器.
+commands.generator.reset.single=§7重置并重新计时: %s
+commands.generator.reset.single.actionbar=[%1] 重置 %2 漏斗生成器.
+commands.generator.reset.all=§7所有频道已复位, 漏斗发生器计时器已启动.
+commands.generator.reset.all.actionbar=[%s] 重置所有漏斗生成器
+commands.generator.remove=删除指定频道中的所有漏斗生成器.
+commands.generator.remove.single=§7已删除所有漏斗生成器在 %s.
+commands.generator.remove.single.actionbar=[%1] 已删除所有漏斗生成器在 %2
+commands.generator.remove.all=§7已删除所有频道中的所有漏斗生成器.
+commands.generator.remove.all.actionbar=[%s] 已删除所有频道中的所有漏斗生成器.
+
+commands.health=显示服务器的TPS, MSPT和实体数量.
+commands.health.startprofile=§7为游戏刻时间进行性能分析中...
+commands.health.fail.mspt=§c不能计算出MSPT. 请反馈问题.
+
+commands.hss=寻找并显示世界中的HSS(硬编码生成点, Hardcoded Spawn Spots).
+commands.hss.invalidaction=§c无效的HSS操作.
+commands.hss.started=§7正在计算你所在位置结构的硬编码生成点.
+commands.hss.started.fortress=§7已开始寻找下界要塞的硬编码生成点. 将模拟生成过程以加快速度.
+commands.hss.started.nostructure=在你所在位置未发现带有硬编码生成点的自然生成结构.
+commands.hss.started.unloaded=无法检测结构边界. 请确保包含该结构的所有区块均已加载.
+commands.hss.started.worldbounds=无法检测结构边界. 结构边界搜索超出了世界边界.
+commands.hss.stopped=§7已停止显示硬编码生成点.
+commands.hss.alreadyrunning=§c你已经在寻找下界要塞的硬编码生成点了.
+commands.hss.notrunning=§c你当前并未在寻找下界要塞的硬编码生成点.
+
+commands.info=启用/禁用信息显示规则. (快捷指令: i)
+commands.info.menu=显示用于切换信息显示规则的菜单.
+commands.info.single=切换单个信息显示规则.
+commands.info.multiple=切换多个信息显示规则.
+commands.info.all=切换所有信息显示规则.
+commands.info.allupdated=§r§7 所有信息显示规则.
+commands.info.canopyRule=§c规则 '%1' 是全局规则, 并且必须使用%2信息进行切换. 有关详细信息, 请使用%2帮助.
+
+commands.jump=传送到所指方块上. (快捷指令: j)
+commands.jump.fail.noblock=§c没找到方块传送跳跃.
+
+commands.log=追踪TNT, 弹射物和下落的方块运动.
+commands.log.precision=§7追踪精度设置为 %s.
+commands.log.started=§7开始追踪 %s.
+commands.log.stopped=§7停止追踪 %s.
+commands.log.invalidtype=§c日志类型无效.
+
+commands.lifetime.tracking=开始和停止跟踪实体生命周期及生成/移除原因.
+commands.lifetime.tracking.unknownaction=§c未知的跟踪操作.
+commands.lifetime.tracking.already=§c已经在跟踪生命周期了.
+commands.lifetime.tracking.not=§c当前没有在跟踪生命周期.
+commands.lifetime.tracking.start=§a已开始实体生命周期跟踪.
+commands.lifetime.tracking.stop=§a已停止实体生命周期跟踪.
+commands.lifetime.tracking.restart=§a已重新启动实体生命周期跟踪.
+commands.lifetime.query=查询详细的实体生命周期及生成/移除原因统计.
+commands.lifetime.query.item=查询详细的物品实体生命周期及生成/移除原因统计.
+commands.lifetime.query.invalidaction=§c请输入有效的查询操作.
+commands.lifetime.query.invalidentity=§c请输入有效的实体类型.
+commands.lifetime.query.header=§l生命周期统计§r (已跟踪 %s 分钟的
+commands.lifetime.query.dimensionheader=§l%1§r§7: §2%2§7 生成 (%3/小时), §4%4§7 移除 (%5/小时)
+commands.lifetime.query.body=§7- §f%1 §2生§7/§4移§7: §2%2§7/§4%3§7, §3存§7: §3%4§7/§b%5§7/§5%6§7
+commands.lifetime.query.entity=%s的生命周期结果
+commands.lifetime.query.entity.header=%s的生命周期结果
+commands.lifetime.query.entity.lifetime.header=§3生命周期概览
+commands.lifetime.query.entity.lifetime.min=§7- §f最小生命周期§7: §3%s§7
+commands.lifetime.query.entity.lifetime.max=§7- §f最大生命周期§7: §b%s§7
+commands.lifetime.query.entity.lifetime.average=§7- §f平均生命周期§7: §5%s§7
+commands.lifetime.query.entity.spawns.header=§2生成原因
+commands.lifetime.query.entity.spawns=§7- §f%1§7: §2%2§7, (%3/小时) §f%4%
+commands.lifetime.query.entity.removals.header=§4移除原因
+commands.lifetime.query.entity.removals=§7- §f%1§7: §4%2§7, (%3/小时) §f%4%
+commands.lifetime.query.entity.unknowntype=未知
+commands.lifetime.query.realtime= 真实时间)
+commands.lifetime.query.realtime.unit= 秒
+commands.lifetime.query.ticktime= 游戏时间)
+commands.lifetime.query.ticktime.unit= 游戏刻
+
+commands.loop=在一个tick中多次运行原版命令.
+
+commands.peek=窥视目标物品栏并可以高亮列表中的物品.
+commands.peek.fail.unloaded=§c在 %s 的目标未加载.
+commands.peek.fail.noinventory=§c没找到物品栏:  %1 在 %2.
+commands.peek.fail.noitems=§c没找到物品:  %1 在 %2.
+commands.peek.query.cleared=§7窥视列表清除.
+commands.peek.query.set=§7窥视列表设置为 '%s'.
+
+commands.playeraction=使模拟玩家以可变的时刻执行动作.
+commands.playeraction.invalidtiming=§c无效的 %1 时刻: %2.
+commands.playeraction.invalidticks=§c无效的 '%1' 刻持续时间: %2. 应为整数.
+
+commands.playerglide=使模拟玩家开始或停止使用鞘翅滑翔.
+
+commands.playerinventory=显示模拟玩家的物品栏.
+commands.playerinventory.noinventory=§c未找到物品栏
+commands.playerinventory.empty=§7%s 的物品栏为空.
+commands.playerinventory.header=%s 的物品栏:
+commands.playerinventory.item=§7- %1%2§7: %3 x%4
+
+commands.playerjoin=使一个新的模拟玩家在你的位置加入.
+
+commands.playerleave=使模拟玩家离开游戏.
+
+commands.playerlook=使模拟玩家朝指定方向看.
+commands.playerlook.at.missing=§c缺少用于看向位置的坐标.
+commands.playerlook.rotation.missing=§c缺少用于视角旋转的偏航角或俯仰角.
+commands.playerlook.invalidoption=§c无效的看向选项: '%s'
+commands.playerlook.block.entityonly=§c方块目标选取只能由实体使用.
+commands.playerlook.block.noblock=§c视野内没有方块.
+commands.playerlook.entity.entityonly=§c实体目标选取只能由实体使用.
+commands.playerlook.entity.noentity=§c视野内没有实体.
+commands.playerlook.me.noserver=§c服务器不能使用以自身为目标.
+
+commands.playermove=使模拟玩家向指定方向移动.
+commands.playermove.invalidoption=§c无效的移动选项: '%s'
+commands.playermove.block.entityonly=§c移动到方块只能由实体使用.
+commands.playermove.block.noblock=§c视野内没有方块.
+commands.playermove.entity.entityonly=§c移动到实体只能由实体使用.
+commands.playermove.entity.noentity=§c视野内没有实体.
+commands.playermove.me.noserver=§c服务器不能使用移动到自己.
+
+commands.playerprefix=设置模拟玩家名称标签的前缀. 使用 '-none' 清除.
+commands.playerprefix.removed=§7已移除模拟玩家前缀.
+commands.playerprefix.set=§7模拟玩家前缀已设置为 "§r%s§r§7".
+
+commands.playerrejoin=使模拟玩家在其上次位置重新加入.
+
+commands.playerselect=使模拟玩家选择一个快捷栏槽位.
+commands.playerselect.invalidslot=§c无效的槽位编号: %s. 应为 0 到 8 之间的数字.
+
+commands.playersneak=使模拟玩家开始或停止潜行.
+
+commands.playersprint=使模拟玩家开始或停止疾跑.
+
+commands.playerstop=使模拟玩家停止执行所有动作.
+
+commands.playerswapheld=将模拟玩家手持的物品与你手持的物品交换.
+
+commands.playertp=使模拟玩家传送到你身边.
+
+commands.pos=显示你的位置或者其他玩家的位置.
+commands.pos.self=§a你的位置: §f%s
+commands.pos.other=§a%1的位置: §f%2
+commands.pos.dimension=§7维度: §7%s
+commands.pos.relative.overworld=§7地狱映射到主世界的位置: §a%s
+commands.pos.relative.nether=§7主世界映射到地狱的位置: §c%s
+
+commands.retest=重置刷怪追踪, 漏斗计数器及漏斗发生器.
+commands.retest.success=§7已重置刷怪计数器, 漏斗计数器及漏斗发生器.
+
+commands.simmap=显示您附近或指定位置的已加载区块的地图.
+commands.simmap.help.distance=显示block半径等于指定距离的地图.
+commands.simmap.help.location=显示指定位置周围的地图.
+commands.simmap.help.display.set=在信息显示中设置模拟地图的距离或位置.
+commands.simmap.help.display.reset=在信息显示中设置模拟地图的位置, 使其跟随当前位置.
+commands.simmap.header=§7加载区块 %1§7 在 §2%2§7 附近
+commands.simmap.invalidDistance=§c距离 '%1' 无效. 请使用从 1 到 %2 的距离.
+commands.simmap.config.distance=§7信息显示模拟地图距离更新为 %s.
+commands.simmap.config.location=§7信息显示模拟地图位置更新为 %1 在 %2§7.
+commands.simmap.config.reset=§7信息显示模拟地图位置更新为跟随您的当前位置.
+
+commands.sit=使您操作的玩家坐下.
+commands.sit.busy=§c您过忙以至于无法坐下.
+
+commands.spawn=模拟生成和检测生成指令.
+commands.spawn.entities=展示当前世界所有实体及其位置的列表.
+commands.spawn.recent=显示最近30s所有怪物的生成数据. 请指定一种怪物到筛选器中.
+commands.spawn.tracking.start=开始跟踪怪物生成. 请指定坐标划定区域用于跟踪.
+commands.spawn.tracking.start.success=§7开始检测怪物生成.
+commands.spawn.tracking.start.mob=§7正在检测该怪物的生成: %s.
+commands.spawn.tracking.start.mob.actionbar=[%1] §a已加入 %2 到怪物跟踪并重置.
+commands.spawn.tracking.start.area= 区域: %1 到 %2.
+commands.spawn.tracking.start.mocking= 由于怪物模拟生成已开启, 怪物不再会生成但会被跟踪.
+commands.spawn.tracking.start.actionbar=[%s] §7开始跟踪怪物生成.
+commands.spawn.tracking.mob=开始检测指定的怪物生成. 请指定坐标划定区域. 重新运行命令来添加更多怪物种类.
+commands.spawn.tracking.mob.invalid=§c无效的怪物名称: %s
+commands.spawn.tracking.query=总结自测试开始的所有的生成.
+commands.spawn.tracking.query.dimension=§7维度 %s§r:
+commands.spawn.tracking.no=§c怪物生成没有被在被跟踪.
+commands.spawn.tracking.already=§c怪物生成正在被跟踪.
+commands.spawn.tracking.test=重置所有怪物生成计数器和漏斗计数器.
+commands.spawn.tracking.test.success=§7怪物生成计数器和漏斗计数器已被重置.
+commands.spawn.tracking.test.success.actionbar=[%s] §7已重置怪物生成和漏斗计数器.
+commands.spawn.tracking.stop=停止跟踪怪物生成.
+commands.spawn.tracking.stop.success=§7怪物生成不再被跟踪.
+commands.spawn.tracking.stop.actionbar=[%s] §7已停止怪物生成跟踪.
+commands.spawn.reset=重置所有怪物生成计数器.
+commands.spawn.mocking=开启/关闭怪物生成但怪物生成进程仍在进行.
+commands.spawn.mocking.enable=§a模拟生成已开启. 怪物不再实际生成, 但生成进程仍在继续.
+commands.spawn.mocking.disable=§c模拟生成已关闭. 怪物生成现在回归正常.
+commands.spawn.mocking.enable.actionbar=[%s] §a模拟生成已开启.
+commands.spawn.mocking.disable.actionbar=[%s] §c模拟生成已关闭.
+
+commands.summontnt=生成指定数量的点燃的TNT到你的位置.
+commands.summontnt.fail.none=§cTNT生成失败.
+commands.summontnt.success=§7已生成 §c%s 个TNT§7.
+
+commands.tick=设置和控制服务器tick速度.
+commands.tick.mspt=放慢服务器tick速度到指定mspt.
+commands.tick.mspt.fail=§cmspt不能低于50.0.
+commands.tick.mspt.success=§7%1 将服务器的tick设置到 %2 mspt.
+commands.tick.step=允许服务器已正常的速度步进指定游戏刻数.
+commands.tick.step.fail=§c没设置游戏速度不能步进游戏刻.
+commands.tick.step.start=§7%1 正在步进 %2 个游戏刻...
+commands.tick.step.done=§7游戏刻步进完成.
+commands.tick.reset=使游戏速度回到正常.
+commands.tick.reset.success=§7%s 成功重置游戏速度.
+commands.tick.sleep=暂停服务器指定时间 (单位: 毫秒).
+commands.tick.sleep.fail=§c无效的停止时间.
+commands.tick.sleep.success=§7%1 正在停止服务器 %2 毫秒.
+
+commands.tntfuse=以游戏刻为单位设置TNT的引信时间.
+commands.tntfuse.reset.success=§7重置所有TNT引信时间到 §a80§7 游戏刻.
+commands.tntfuse.set.fail=§c无效的引信时间: %1 ticks. 必须介于 %2 和 %3 ticks 之间.
+commands.tntfuse.set.success=§7TNT的引信时间设置为 §a%s§7 ticks.
+
+commands.trackevent=计算游戏事件发生数量. 显示数量在信息栏里.
+commands.trackevent.stop=§7停止跟踪游戏事件 %s.
+commands.trackevent.start=§7开始跟踪游戏事件 %s.
+commands.trackevent.invalid=§c游戏事件 %1 未在 %2 中找到.
+
+commands.velocity=影响实体的速度.
+commands.velocity.missingvelocity=§c请输入x, y, z方向的速度.
+commands.velocity.query=§7实体速度 (m/gt):
+commands.velocity.add=§7已为实体增加速度 (m/gt):
+commands.velocity.set=§7已设置实体速度 (m/gt):
+
+commands.warp=传送和管理路径点. (快捷指令: w)
+commands.warp.edit=添加和移除路径点.
+commands.warp.tp=将你传送到一个路径点.
+commands.warp.list=列出所有可用的路径点.
+commands.warp.exists=§c路径点 '%s' 已经存在. 使用 ./warps 列出所有的路径点.
+commands.warp.noexist=§c路径点 '%s' 未找到. 使用 ./warps 列出所有的路径点.
+commands.warp.add.success=§7路径点 '%s' 已被添加.
+commands.warp.remove.success=§7路径点 '%s' 已被移除.
+commands.warp.tp.fail.dimension=§c请到 %1 来传送到 '%2'.
+commands.warp.tp.success=§7传送到路径点 '%s'.
+commands.warp.list.empty=§7当前没有路径点.
+commands.warp.list.header=§7可用的路径点:
+
+## rules
+rules.generic.unknown=§c无效的规则: %1. 使用 %2help 来获取更多信息.
+rules.generic.invalidtype=§c无效类型: '%1'的值必须是%2类型.
+rules.generic.outofrange=§c超出范围: '%1'的值必须在%2和%3之间
+rules.generic.outofrange.withother= 或为以下之一: %s
+rules.generic.blocked=§c%s 规则仍关闭.
+rules.generic.status=§7%1 现在的状态是 §l
+rules.generic.nochange=§7%1 现在的状态已经是 §l
+rules.generic.updated=§7%1 现在的状态更新为 §l
+rules.generic.enabled=§a已启用
+rules.generic.disabled=§c已禁用
+rules.generic.ability=§7能力
+rules.generic.defaultvalue=(默认值: %s)
+
+rules.commandCamera=开启camera指令.
+rules.commandClaimProjectiles=开启claimprojectiles指令.
+rules.hopperCounters=开启counter指令和漏斗计数器功能.
+rules.hopperGenerators=启用生成器命令和漏斗生成器功能.
+rules.commandJumpSurvival=开启jump指令(在生存模式下).
+rules.commandPosOthers=允许在其他玩家上使用pos命令.
+rules.commandWarp=开启warp & warps指令.
+rules.commandWarpSurvival=开启warp & warps指令(在生存模式下).
+rules.allowBubbleColumnPlacement=关闭放置气泡柱限制.
+rules.allowPeekInventory=启用peek命令和PeekInventory信息显示规则, 并可以使用小望远镜进行窥视.
+rules.armorStandRespawning=盔甲架被弹射物击中会掉落所持物品.
+rules.autoItemPickup=破坏方块自动拾取物品.
+rules.carefulBreak=破坏方块和潜行时自动拾取物品.
+rules.cauldronConcreteConversion=混凝土粉末物品丢入装水的炼药锅变成固化的混凝土.
+rules.chunkBorders=当箭在物品栏槽位13(顶部中间)时, 启用区块边界可视化.
+rules.collisionBoxes=当箭在物品栏槽位14(顶部中间旁边)时, 启用实体碰撞箱可视化.
+rules.creativeHotbarSwitching=允许多个快捷栏之间快速切换. 将箭放入物品栏槽位17(右上角), 然后潜行并滚动以切换.
+rules.creativeInstantTame=允许在在创造模式下用对应的食物立即驯服动物.
+rules.creativeNetherWaterPlacement=允许在创造模式下于下界放置水
+rules.creativeNoTileDrops=允许在创造模式下防止方块从被破坏的方块中掉落.
+rules.creativeOneHitKill=一击必杀. 蹲着时, 玩家周围的实体也会被杀(在创造模式下).
+rules.dupeTnt=TNT被活塞推动并且被音符盒充能时复制.
+rules.durabilityNotifier=当你的工具还剩%s耐久度时, 发出叮的响声和提示.
+rules.durabilityNotifier.alert=§c耐久度还剩: %s
+rules.durabilitySwap=从您的手中带走0耐久物品.
+rules.echoShardsEnableShriekers=在幽匿感测体上使用回响碎片可使其召唤监守者.
+rules.enderPearlChunkLoading=允许末影珍珠使其周围指定区块半径(方形范围)内的区块运作.
+rules.entityInstantDeath=消除20游戏刻死亡动画. 同时实体不再会掉落经验.
+rules.entitySeparation=当堆叠的实体触发压力板时, 会有一个实体沿相邻投掷器朝向的方向从堆叠中分离.
+rules.explosionChainReactionOnly=使爆炸只影响TNT方块.
+rules.explosionNoBlockDamage=关闭爆炸破坏.
+rules.explosionOff=完全关闭爆炸.
+rules.flippinArrows=对方块使用箭可以翻转, 旋转和打开. 放在副手可以使方块放置时翻转.
+rules.instaminableDeepslate=急迫2下使用效率5的下届合金镐时, 可以秒破深板岩.
+rules.instaminableEndstone=急迫2下使用效率5的下届合金镐时, 可以秒破末地石.
+rules.minecartChunkLoading=允许矿车在生成后的 10 秒内使其周围指定区块半径(方形范围)内的区块运作.
+rules.noWelcomeMessage=禁用 §lCanopy§r§8 欢迎消息.
+rules.pistonBedrockBreaking=允许活塞在背对基岩时, 伸出时破坏基岩.
+rules.playerSit=允许玩家通过快速 %s 次蹲起操作来坐下.
+rules.potionBoostedBreeding=重新引入允许速度药水影响繁殖属性的行为.
+rules.quickFillContainer=对容器使用一个物品时, 放一个箭在物品栏的左上角, 可以将背包里所有的这个物品放进容器里.
+rules.quickFillContainer.filled=§7已填充%1通过%2
+rules.quickFillContainer.taken=§7已取走所有%1从%2
+rules.refillHand=当你手上的物品用完时, 自动从背包里补充. 在物品栏槽位10(左上角旁边)放置一支箭以使用.
+rules.renderEndGatewayExits=在通过末地折跃门后显示其出口位置.
+rules.renewableElytraDropChance=幻翼被潜影贝导弹杀死时有几率掉落鞘翅.
+rules.renewableSponge=守卫者被闪电击中会变成远古守卫者.
+rules.serverSideCollisionBoxes=根据实体的服务器端位置而非客户端位置显示碰撞箱.
+rules.simplayerSaving=启用对模拟玩家的 playerdata 保存. 会降低性能, 但可让模拟玩家在离开并重新加入时保留其物品栏和位置.
+rules.simplayerRejoining=使在线模拟玩家在世界重新加载时重新加入.
+rules.spawnEggSpawnWithMinecart=在铁轨上使用刷怪蛋时, 生成的实体将被放置在铁轨上的矿车中.
+rules.tntFuse=TNT引信时间(游戏刻).
+rules.tntPrimeMomentum=硬编码TNT引爆动量.
+
+rules.infoDisplay.biome=显示群系.
+rules.infoDisplay.blockStates=显示你看着的方块状态.
+rules.infoDisplay.cardinalFacing=使用N, S, E, W 和坐标系方向 (ex. N (-z))显示你的朝向.
+rules.infoDisplay.cardinalFacing.display=§r朝向: §7%s§r
+rules.infoDisplay.chunkCoords=显示您所在的方块的坐标以及您在该方块中的位置.
+rules.infoDisplay.chunkCoords.display=§r区块: §7%1 in %2§r
+rules.infoDisplay.coords=坐标显示精确到两位小数.
+rules.infoDisplay.dimension=显示你当前的维度.
+rules.infoDisplay.entities=显示你面前的实体个数.
+rules.infoDisplay.entities.display=§r实体数: §7%s§r
+rules.infoDisplay.eventTrackers=显示跟踪的游戏事件发生次数.
+rules.infoDisplay.facing=显示你的仰角和俯角.
+rules.infoDisplay.facing.display=§r俯角: §7%1§r 仰角: §7%2§r
+rules.infoDisplay.heldItemDurability=显示你主手中物品的耐久度.
+rules.infoDisplay.heldItemDurability.display=耐久度 %s
+rules.infoDisplay.blockBreakSpeed=显示你在过去 %1 个游戏刻 (%2 秒) 内每秒平均破坏的方块数.
+rules.infoDisplay.blockBreakSpeed.display=方块破坏速度: %1 b/s
+rules.infoDisplay.blockBreakSpeed.singleLine=§c方块破坏速度应始终单独占用一行信息显示。§r
+rules.infoDisplay.hopperCounterCounts=显示所有漏斗计数器和对应颜色. 漏斗计数器模式控制这个信息.
+rules.infoDisplay.light=显示脚下亮度.
+rules.infoDisplay.light.display=§r亮度: §e%1§r (§b%2 天空§r)
+rules.infoDisplay.liquidStates=显示你目标液体的状态.
+rules.infoDisplay.liquidTarget=显示你目标液体的标识符.
+rules.infoDisplay.moonPhase=显示月相.
+rules.infoDisplay.moonPhase.firstQuarter=上弦月
+rules.infoDisplay.moonPhase.full=满月
+rules.infoDisplay.moonPhase.lastQuarter=下弦月
+rules.infoDisplay.moonPhase.new=新月
+rules.infoDisplay.moonPhase.waningCrescent=残月
+rules.infoDisplay.moonPhase.waningGibbous=亏凸月
+rules.infoDisplay.moonPhase.waxingCrescent=眉月
+rules.infoDisplay.moonPhase.waxingGibbous=盈凸月
+rules.infoDisplay.moonPhase.unknown=§4未知
+rules.infoDisplay.noFog=禁用迷雾. 水和熔岩不受影响.
+rules.infoDisplay.peekInventory=显示方块或者实体的物品栏.
+rules.infoDisplay.peekInventory.empty=空
+rules.infoDisplay.ping=显示你当前到服务器的网络延迟.
+rules.infoDisplay.ping.display=延迟: %s
+rules.infoDisplay.renderLightLevel=在附近方块上方渲染亮度值. 警告: 这是一个非常卡顿的规则.
+rules.infoDisplay.renderSignalStrength=在附近红石粉上方显示信号强度值.
+rules.infoDisplay.sessionTime=显示的你加入存档的时间.
+rules.infoDisplay.sessionTime.display=§r在线时间: §7%s§r
+rules.infoDisplay.signalStrength=显示所指方块的信号强度.
+rules.infoDisplay.simulationMap=显示您周围已加载的方块的地图. simmap命令可用于对此进行配置. 警告: 这是一个非常卡顿的规则.
+rules.infoDisplay.simulationMap.singleLine=§c模拟地图应始终单独占用一行信息显示。§r
+rules.infoDisplay.horse=显示你所骑乘的马的速度和最大生命值.
+rules.infoDisplay.horse.display=马的速度: §a%1§r, 最大生命值: §c%2§r
+rules.infoDisplay.slimeChunk=显示当前区块是否是史莱姆区块(只在史莱姆区块时显示).
+rules.infoDisplay.slimeChunk.display=§7(§a史莱姆区块§7)§r: %s
+rules.infoDisplay.speed=以米每秒为单位显示当前速度.
+rules.infoDisplay.structures=显示你所在位置的自然生成结构.
+rules.infoDisplay.structures.display=结构: 
+rules.infoDisplay.structures.display.none=无
+rules.infoDisplay.target=显示你目标的方块或实体的标识符.
+rules.infoDisplay.timeOfDay=显示游戏中时间.
+rules.infoDisplay.tps=显示TPS.
+rules.infoDisplay.tps.display=§rTPS: %s§r
+rules.infoDisplay.tpsAndEntities.display=§rTPS: %1§r 实体数: §7%2§r
+rules.infoDisplay.velocity=显示你当前的x,y,z速度(米/游戏刻).
+rules.infoDisplay.weather=显示你当前维度的天气.
+rules.infoDisplay.weather.display=天气: %s
+rules.infoDisplay.worldDay=显示存档天数.
+rules.infoDisplay.worldDay.display=§r存档天数: §7%s§r
+
+## simplayer
+simplayer.notonline=§c模拟玩家 '%s' 不在线.
+simplayer.alreadyonline=§c模拟玩家 '%s' 已在线.
+simplayer.leave.broadcast=§e%s 离开了游戏
+simplayer.swapheld.error=§c交换物品时出错: %s
+
+## 补全语言包中缺失的简体中文条目
+commands.analyzearea.nametaken=§c已存在同名的区域分析.
+commands.analyzearea.ui.create.name=名称
+commands.analyzearea.ui.edit.title=§2编辑区域分析
+commands.analyzearea.ui.edit.submit=保存
+commands.analyzearea.ui.page.edit=编辑区域
+commands.counter.mode.single.success=§7漏斗计数器 %1§7 模式: %2
+commands.hss.alreadyfinding=§c你已在查找硬编码生成点.
+commands.hss.finding=§7正在查找硬编码生成点...
+commands.hss.findingstarted=§7正在查找硬编码生成点. 为加快进程, 已开始监测生成.
+commands.hss.findingstopped=§7硬编码生成点查找已停止. 生成监测已恢复正常.
+commands.hss.notfinding=§c你当前没有在查找硬编码生成点.
+commands.peek.armed=§7窥视已准备好. 准星对准容器并交互即可查看其内容.
+commands.peek.expired=§7窥视已过期. 请重新运行指令.
+commands.peek.fail.notcreative=§c仅可在创造模式下窥视容器.
+commands.peek.fail.notarget=§c没有可窥视的容器, 已取消.
+commands.peek.tip=§7交互: §f上半部分§r\n§7潜行 + 交互: §f下半部分
+commands.peek.view.top=上半部分
+commands.peek.view.bottom=下半部分
+commands.quickfillmode=修改当前的快速填充模式.
+commands.quickfillmode.invalidmode=§c无效的快速填充模式.
+commands.quickfillmode.updated=§7快速填充模式已设为 §a%s§7.
+rules.generic.updateerror=§c规则更新失败. 更多信息请查看内容日志, 并反馈此问题.
+rules.commandTntFuse=启用 tntfuse 指令和自定义 TNT 引信时间功能.
+rules.fastMineGlass=使用效率 V 的下界合金镐挖掘玻璃时, 可近乎瞬间破坏玻璃.
+rules.hotbarSwitching=允许快速切换多个快捷栏. 将箭放入物品栏右上角, 然后潜行并滚动以切换.
+rules.hotbarSwitchingSurvival=允许在生存模式下使用 hotbarswitching.
+rules.infoDisplay.biome.display=§r群系: §a%s§r
+rules.infodisplay.dimension=显示你当前的维度.
+rules.infoDisplay.lightAndBiome.display=§r亮度: §e%1 §r群系: §a%2§r
+rules.infoDisplay.lookingAt=显示你所看方块或实体的标识符.
+rules.infoDisplay.moonPhase.display=§r月相: §7%s§r
+rules.infoDisplay.showDisplay=切换是否显示信息栏.
+rules.infodisplay.structures=显示你所在位置自然生成的结构.
+rules.infodisplay.structures.display=结构:
+rules.infodisplay.structures.display.none=无
+rules.infoDisplay.timeOfDay.display=§r时间: §7%s§r
+rules.infoDisplay.worldDayAndTimeOfDay.display=§r第 %1 天 §7%2§r
+rules.quickFillContainer.cleared=§7已清空 §a%1§7
+rules.quickFillContainer.filled.bulk=§7已将所有 §a%2§7 放入 §a%1§7
+rules.quickFillContainer.filled.clipboard=§7已将剪贴板内容放入 §a%1§7
+rules.quickFillContainer.filled.empty=§7没有可放入 §a%1§7 的物品
+rules.quickFillContainer.filled.full=§a%1§7 已满
+rules.quickFillContainer.filled.merge=§7已将匹配的物品合并到 §a%1§7
+rules.quickFillContainer.filled.noitem=§7没有可放入 §a%1§7 的 §a%2§7
+rules.quickFillContainer.filled.nomatch=§7没有匹配的物品可放入 §a%1§7
+rules.quickFillContainer.menu.apply=应用
+rules.quickFillContainer.menu.takecopies=取出份数
+rules.quickFillContainer.menu.takecopies.description=取出物品时要取出的剪贴板副本数量. 留空或设为 0 将尽可能多地取出.
+rules.quickFillContainer.menu.title=§2快速填充剪贴板选项
+rules.quickFillContainer.menu.wildcard=通配物品类型
+rules.quickFillContainer.menu.wildcard.description=与容器交互时, 将被替换为你手持物品的物品类型.
+rules.quickFillContainer.mode.bulk=批量
+rules.quickFillContainer.mode.clipboard=剪贴板
+rules.quickFillContainer.mode.logicalbulk=逻辑批量
+rules.quickFillContainer.mode.merge=合并
+rules.quickFillContainer.saved.clipboard=§7已将 §a%1§7 复制到剪贴板
+rules.quickFillContainer.taken.bulk=§7已从 §a%2§7 取出所有 §a%1§7
+rules.quickFillContainer.taken.clipboard=§7已从 §a%2§7 取出 §a%1§7 份剪贴板内容
+rules.quickFillContainer.taken.empty=§7§a%1§7 中没有可取出的物品
+rules.quickFillContainer.taken.merge=§7已从 §a%1§7 取出匹配的物品
+rules.quickFillContainer.taken.noitem=§7§a%1§7 中没有可取出的 §a%2§7
+rules.quickFillContainer.taken.nomatch=§7§a%1§7 中没有匹配的物品可取出
+rules.quickFillContainer.taken.nospace=§7没有空间存放从 §a%2§7 取出的 §a%1§7
+rules.renewableElytra=幻翼被潜影贝弹射物击杀时, 有 1% 概率掉落鞘翅.
+rules.simplayerActionInfo=在模拟玩家名称标签下方显示其当前重复执行的操作.
+rules.tntPrimeMaxMomentum=TNT 点燃时始终以随机方向获得最大动量.
+rules.tntPrimeNoMomentum=TNT 点燃时不会获得动量.
+rules.universalChunkLoading=矿车生成后的 10 秒内, 会使周围 5×5 区块范围持续运作.
+simplayer.action.attack=攻击
+simplayer.action.break=破坏
+simplayer.action.build=建造
+simplayer.action.drop=丢弃
+simplayer.action.dropall=全部丢弃
+simplayer.action.dropstack=丢弃一组
+simplayer.action.interact=交互
+simplayer.action.jump=跳跃
+simplayer.action.line=§a%1 §7(间隔 %2)
+simplayer.action.use=使用
+simplayer.editor.tip=§7交互: §f快捷栏与盔甲§r\n§7潜行 + 交互: §f物品栏
+simplayer.editor.view.hotbarAndArmor=快捷栏与盔甲
+simplayer.editor.view.inventory=物品栏
+simplayer.nameclaimed=§c名称 '%s' 属于一个并非由 Canopy 创建的模拟玩家.
+
+## 游戏内提示
+commands.canopy.menu.title=§l§2Canopy§r §2规则
+commands.info.menu.title=§2信息显示规则
+commands.loop.error=§c循环执行错误 (第 %1 次): %2
+rules.generic.error=§c错误: %1
+rules.generic.ruleerror=§c错误: %1 (规则 %2)
+simplayer.unexpectedunload=§c模拟玩家 %1 意外卸载. 若它在主世界以外的维度生成, 且同一维度内没有其他玩家, 可能无法加载区块. 请先在主世界生成模拟玩家, 再将其传送到目标位置.

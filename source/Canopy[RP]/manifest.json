@@ -1,0 +1,51 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Canopy 资源包 v1.6.3（简体中文）",
+    "description": "Canopy 技术信息与功能扩展包的简体中文本地化版本。原作者：ForestOfLight。",
+    "uuid": "bcf34368-ed0c-4cf7-938e-582cccf9950d",
+    "version": [
+      1,
+      6,
+      3
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      60
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "7f6b23df-a583-476b-b0e4-87457e65f7c0",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "7f6b23df-a583-476b-b0e4-87457e65f7c0",
+      "version": [
+        1,
+        6,
+        3
+      ]
+    }
+  ],
+  "capabilities": [
+    "pbr"
+  ],
+  "metadata": {
+    "authors": [
+      "相安",
+      "ForestOfLight"
+    ],
+    "license": "MIT",
+    "url": "https://github.com/ForestOfLight/Canopy",
+    "product_type": "addon"
+  }
+}

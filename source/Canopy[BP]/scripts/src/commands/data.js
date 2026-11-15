@@ -1,0 +1,257 @@
+import { getColoredDimensionName, stringifyLocation } from "../../include/utils";
+import { ProxyInventoryEntity } from '../classes/proxy/ProxyInventoryEntity';
+import { VanillaCommand, PlayerCommandOrigin } from "../../lib/canopy/Canopy";
+import { BlockComponentTypes, CommandPermissionLevel, CustomCommandParamType, CustomCommandStatus } from "@minecraft/server";
+
+const TARGET_DISTANCE = 100;
+
+const DISAMBIGUATION_PROPERTIES = [
+    "id",
+    "typeId",
+    "location",
+    "dimension"
+]
+
+new VanillaCommand({
+    name: 'canopy:data',
+    description: 'commands.data',
+    optionalParameters: [{ name: 'entity', type: CustomCommandParamType.EntitySelector }],
+    permissionLevel: CommandPermissionLevel.Any,
+    allowedSources: [PlayerCommandOrigin],
+    callback: dataCommand,
+    wikiDescription: 'Displays information about blocks or entities. If the entity argument is specified, it will display information about that entity. Otherwise, information about the block or entity you are looking at will be displayed. This includes the its name, location, dimension, properties, states, components, component data, tags, and other info.'
+});
+
+function dataCommand(origin, entity) {
+    let message = [];
+    if (!entity) {
+        message = getTargetedMessage(origin.getSource());
+    } else if (entity?.length > 0) {
+        entity.forEach((currEntity) => {
+            message.push(formatEntityOutput(currEntity));
+        });
+    } else {
+        return { status: CustomCommandStatus.Failure, message: 'generic.target.notfound' };
+    }
+    origin.sendMessage(message);
+}
+
+function getTargetedMessage(source) {
+    const blockRayResult = source.getBlockFromViewDirection({ includeLiquidBlocks: true, includePassableBlocks: true, maxDistance: TARGET_DISTANCE });
+    const entityRayResult = ProxyInventoryEntity.excludeFrom(source.getEntitiesFromViewDirection({ ignoreBlockCollision: false, includeLiquidBlocks: false, includePassableBlocks: true, maxDistance: TARGET_DISTANCE }));
+    const block = blockRayResult?.block;
+    const entity = entityRayResult[0]?.entity;
+    if (!block && !entity)
+        return { translate: 'generic.target.notfound' };
+
+    if (entity)
+        return formatEntityOutput(entity);
+    else if (block)
+        return formatBlockOutput(block);
+}
+
+function formatBlockOutput(block) {
+    const dimensionId = block.dimension.id.replace('minecraft:', '');
+    const properties = formatProperties(block);
+    const states = JSON.stringify(block.permutation.getAllStates());
+    const components = formatComponents(block, tryGetBlockComponents(block));
+    const tags = JSON.stringify(block.getTags());
+
+    const message = {
+        rawtext: [
+            { text: `§l§a${block.typeId}§r: ${stringifyLocation(block.location, 0)}, ${getColoredDimensionName(dimensionId)}\n` },
+            { rawtext: [
+                { translate: 'commands.data.properties', with: [properties] }, { text: '\n' },
+                { translate: 'commands.data.states', with: [states] }, { text: '\n' },
+                { translate: 'commands.data.components', with: [components] }, { text: '\n' },
+                { translate: 'commands.data.tags', with: [tags] }, { text: '\n' }
+            ]}
+        ]
+    };
+    return message;
+}
+
+function formatEntityOutput(entity) {
+    const memo = new Set();
+
+    const nameTag = entity.nameTag ? `§r§a(§o${entity.nameTag}§r§a)` : '';
+    const dimensionId = entity.dimension.id.replace('minecraft:', '');
+    const properties = formatProperties(entity, memo);
+    const components = formatComponents(entity, entity.getComponents(), memo);
+    const dynamicProperties = JSON.stringify(entity.getDynamicPropertyIds());
+    const effects = JSON.stringify(entity.getEffects());
+    const tags = JSON.stringify(entity.getTags());
+    const headLocationStr = entity.getHeadLocation() ? stringifyLocation(entity.getHeadLocation(), 2) : 'none';
+    const rotation = entity.getRotation();
+    const velocityStr = entity.getVelocity() ? stringifyLocation(entity.getVelocity(), 3) : 'none';
+    const viewDirectionStr = entity.getViewDirection() ? stringifyLocation(entity.getViewDirection(), 2) : 'none';
+    const AABBStr = entity.getAABB() ? formatObject(entity, entity.getAABB(), true) : 'none';
+    
+    const message = {
+        rawtext: [
+            { text: `§l§a${entity.typeId}${nameTag}§r: §2id:${entity.id}§r, ${stringifyLocation(entity.location, 2)}, ${getColoredDimensionName(dimensionId)}\n` },
+            { rawtext: [
+                { translate: 'commands.data.properties', with: [properties] }, { text: '\n' },
+                { translate: 'commands.data.components', with: [components] }, { text: '\n' },
+                { translate: 'commands.data.dynamicProperties', with: [dynamicProperties, entity.getDynamicPropertyTotalByteCount().toString()] }, { text: '\n' },
+                { translate: 'commands.data.effects', with: [effects] }, { text: '\n' },
+                { translate: 'commands.data.tags', with: [tags] }, { text: '\n' },
+                { translate: 'commands.data.other', with: [headLocationStr, rotation.x.toFixed(2), rotation.y.toFixed(2), velocityStr, viewDirectionStr, AABBStr] }, { text: '\n' }
+            ]}
+        ]
+    }
+    return message;
+}
+
+function formatProperties(target, memo = null) {
+    let output = '';
+    for (const key in target) {
+        try {
+            let value = target[key];
+            if (typeof value === 'function')
+                continue;
+            else if (typeof value === 'object')
+                value = formatObject(target, value, false, memo);
+            else
+                value = JSON.stringify(value);
+            output += `§7${key}=§b${value}§7, `;
+        } catch(error) {
+            console.warn(error);
+        }
+    }
+    return output.slice(0, -2);
+}
+
+function tryGetBlockComponents(target) {
+    const components = [];
+    for (const componentType of Object.values(BlockComponentTypes)) {
+        try {
+            const component = target.getComponent(componentType);
+            if (component) components.push(component);
+        } catch(error) {
+            console.warn(error);
+        }
+    }
+    return components;
+}
+
+function formatComponents(target, components, memo = null) {
+    if (memo === null) 
+        memo = new Set();
+
+    if (components.length === 0) 
+        return 'none';
+    let output = '';
+    for (const component of components) 
+        output += formatComponent(target, component, memo);
+    return output;
+}
+
+function formatComponent(target, component, memo = null) {
+    if (memo === null) 
+        memo = new Set();
+
+    let output = '';
+    for (const key in component) {
+        try {
+            let value = component[key];
+            if (typeof value === 'function')
+                continue;
+            else if (typeof value === 'object')
+                value = formatObject(target, value, false, memo);
+            else
+                value = JSON.stringify(value);
+            output += `${key}=§b${value}§7, `;
+        } catch(error) {
+            console.warn(error);
+        }
+    }
+    output = output.slice(0, -2);
+    return `\n  §7>§f ${component.typeId}§7 - {${output}}`;
+}
+
+export function formatObject(target, object, shouldColorTopLevel = false, memo = null) {
+    if (memo === null) 
+        memo = new Set();
+
+    if (isMemoizableGameObject(object)) {
+        const objectHashValue = hashMemoizableGameObject(object);
+        if (memo.has(objectHashValue)) 
+            return formatRecursiveDisambiguation(object, memo);
+        
+        memo.add(objectHashValue);
+    }
+
+    else if (isMemoizableGameObject(target)) {
+        const targetHashValue = hashMemoizableGameObject(target);
+        memo.add(targetHashValue);
+    }
+
+    let output = '';
+    for (const key in object) {
+        try {
+            const value = object[key];
+            if (typeof value === 'function')
+                continue;
+            let formatted;
+            if (typeof value === 'object')
+                formatted = formatObject(target, value, false, memo);
+            else
+                formatted = JSON.stringify(value);
+
+            if (shouldColorTopLevel)
+                output += `§7${key}=§b${formatted}§7, `;
+            else
+                output += `${key}=${formatted}, `;
+        } catch(error) {
+            console.warn(error);
+        }
+    }
+    output = output.slice(0, -2);
+    if (shouldColorTopLevel)
+        return `§7{${output}}§r`;
+    return `{${output}}`;
+}
+
+function formatRecursiveDisambiguation(object, memo) {
+    let output = '§5...§7, ';
+    for (const key of DISAMBIGUATION_PROPERTIES) {
+        try {
+            const value = object[key];
+            if (value === undefined) continue;
+
+            if (typeof value === 'function')
+                continue;
+            let formatted;
+            if (typeof value === 'object')
+                formatted = formatObject(null, value, false, memo);
+            else
+                formatted = JSON.stringify(value);
+
+            output += `§7${key}=§b${formatted}§7, `;
+        } catch(error) {
+            console.warn(error);
+        }
+    }
+    output = output.slice(0, -2);
+    return `§d{§7${output}§d}§r`;
+}
+
+function isMemoizableGameObject(value) {
+    try {
+        if (value === null || value === undefined) return false;
+        return (value.id !== undefined && value.typeId !== undefined) || (value.location !== undefined && value.dimension !== undefined);
+    }
+    catch {
+        return false;
+    }
+}
+
+function hashMemoizableGameObject(value) {
+    if (value.id !== undefined) 
+        return `E:${value.id}`;
+    
+    else if (value.location !== undefined && value.dimension !== undefined) 
+        return `B:${value.location.x},${value.location.y},${value.location.z},${value.dimension.id}`;
+    
+}

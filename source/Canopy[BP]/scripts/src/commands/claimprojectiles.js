@@ -1,0 +1,63 @@
+import { CommandPermissionLevel, CustomCommandParamType, CustomCommandStatus, EntityComponentTypes, Player, system } from "@minecraft/server";
+import { BooleanRule, VanillaCommand } from "../../lib/canopy/Canopy";
+
+const CLAIM_RADIUS = 25;
+
+new BooleanRule({
+    category: 'Rules',
+    identifier: 'commandClaimProjectiles',
+    description: { translate: 'rules.commandClaimProjectiles' },
+    wikiDescription: 'Determines whether the `/claimprojectiles` command can be used.'
+});
+
+new VanillaCommand( {
+    name: 'canopy:claimprojectiles',
+    description: 'commands.claimprojectiles',
+    optionalParameters: [
+        { name: 'radius', type: CustomCommandParamType.Integer },
+        { name: 'player', type: CustomCommandParamType.PlayerSelector }
+    ],
+    permissionLevel: CommandPermissionLevel.Any,
+    contingentRules: ['commandClaimProjectiles'],
+    callback: claimProjectilesCommand,
+    wikiDescription: 'Makes you (or another specified player) the owner of all projectile within a certain block radius. If no radius is specified, the default is 25 blocks.'
+});
+
+function claimProjectilesCommand(origin, radius = CLAIM_RADIUS, player) {
+    if (player)
+        player = player[0];
+    else
+        player = origin.getSource();
+    if (!(player instanceof Player))
+        return { status: CustomCommandStatus.Failure, message: 'commands.claimprojectiles.fail.sourcenotplayer' };
+    const projectiles = getProjectilesInRange(player, radius);
+    if (projectiles.length === 0) {
+        origin.sendMessage({ translate: 'commands.claimprojectiles.fail.nonefound', with: [String(radius)] });
+        return;
+    }
+    const numChanged = changeOwner(projectiles, player);
+    player.sendMessage({ translate: 'commands.claimprojectiles.success.self', with: [String(numChanged), String(radius)] });
+    if (origin !== player)
+        origin.sendMessage({ translate: 'commands.claimprojectiles.success.other', with: [String(numChanged), String(radius), player.name] });
+}
+
+function getProjectilesInRange(source, radius) {
+    const radiusProjectiles = [];
+    const radiusEntities = source.dimension.getEntities({ location: source.location, maxDistance: radius });
+    for (const entity of radiusEntities) {
+        if (entity?.hasComponent(EntityComponentTypes.Projectile))
+            radiusProjectiles.push(entity);
+    }
+    return radiusProjectiles;
+}
+
+function changeOwner(projectiles, targetPlayer) {
+    for (const projectile of projectiles) {
+        system.run(() => {
+            if (!projectile)
+                return;
+            projectile.getComponent(EntityComponentTypes.Projectile).owner = targetPlayer;
+        });
+    }
+    return projectiles.length;
+}

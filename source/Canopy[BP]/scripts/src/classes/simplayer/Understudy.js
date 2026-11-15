@@ -1,0 +1,317 @@
+import { Block, Entity, Player, world, system, GameMode, EntityComponentTypes } from "@minecraft/server";
+import { spawnSimulatedPlayer } from "@minecraft/server-gametest";
+import { getLookAtLocation, getLookAtRotation, portOldGameModeToNewUpdate } from "./utils";
+import { Vector } from "../../../lib/Vector";
+import { PlayerInfoSaver } from "./PlayerInfoSaver";
+import { Actions } from "./Actions";
+import { UnderstudyNotConnectedError } from "../errors/UnderstudyNotConnectedError";
+import { UnderstudyConnectedError } from "../errors/UnderstudyConnectedError";
+import { UnderstudySaveInfoError } from "../errors/UnderstudySaveInfoError";
+import Understudies from "./Understudies";
+
+class Understudy {
+    static OWNERSHIP_TAG = 'canopy:owned';
+
+    name;
+    #simulatedPlayer = null;
+    #createdTick;
+    #isConnected = false;
+    #lookTarget;
+    #actions;
+    #playerInfoSaver;
+    #isUnloaded = false;
+
+    static isCanopyOwned(simulatedPlayer) {
+        return simulatedPlayer?.hasTag(Understudy.OWNERSHIP_TAG) === true;
+    }
+
+    constructor(name) {
+        this.name = name;
+        this.#createdTick = system.currentTick;
+        this.#playerInfoSaver = new PlayerInfoSaver(this);
+        this.#actions = new Actions(this);
+    }
+
+    isConnected() {
+        return this.#isConnected;
+    }
+
+    onConnectedTick() {
+        if (!this.#lookTarget?.isValid)
+            this.clearLookTarget();
+        if (this.#simulatedPlayer !== null)
+            this.refreshHeldItem();
+        if (this.#simulatedPlayer.isGliding && this.#simulatedPlayer.isOnGround)
+            this.glide(false);
+        if (this.#isInLoadedChunk()) {
+            this.#isUnloaded = false;
+        } else {
+            if (!this.#isUnloaded)
+                this.#sendUnloadedMessage()
+            this.#isUnloaded = true;
+        }
+        this.#actions.onTick();
+        this.#playerInfoSaver.onConnectedTick();
+    }
+
+    get createdTick() {
+        return this.#createdTick;
+    }
+
+    get simulatedPlayer() {
+        this.#assertConnected();
+        return this.#simulatedPlayer;
+    }
+
+    get actions() {
+        this.#assertConnected();
+        return this.#actions;
+    }
+
+    get nameTag() {
+        const prefix = Understudies.getNametagPrefix();
+        if (prefix === '')
+            return this.name;
+        return `§r[${prefix}§r] ${this.name}`;
+    }
+
+    get lookTarget() {
+        this.#assertConnected();
+        return this.#lookTarget;
+    }
+
+    clearLookTarget() {
+        this.#assertConnected();
+        this.#lookTarget = void 0;
+    }
+
+    get headRotation() {
+        this.#assertConnected();
+        if (!this.#lookTarget?.isValid)
+            this.clearLookTarget();
+        if (this.#lookTarget === void 0)
+            return this.#simulatedPlayer.headRotation;
+        let targetLocation;
+        if (this.#lookTarget instanceof Entity) {
+            try {
+                targetLocation = this.#lookTarget.getHeadLocation();
+            } catch {
+                return this.#simulatedPlayer.headRotation;
+            }
+        } else {
+            targetLocation = this.#lookTarget.location;
+        }
+        return getLookAtRotation(this.#simulatedPlayer.location, targetLocation);
+    }
+
+    savePlayerInfo() {
+        this.#assertConnected();
+        this.#playerInfoSaver.save();
+    }
+
+    markInventoryDirty() {
+        this.#playerInfoSaver.markInventoryDirty();
+    }
+
+    join({ location, dimension, rotation = { x: 0, y: 0 }, gameMode = GameMode.Survival }) {
+        this.#assertNotConnected();
+        Understudies.onConnect();
+        const updatedGameMode = portOldGameModeToNewUpdate(gameMode);
+        this.#simulatedPlayer = spawnSimulatedPlayer({ ...location, dimension }, this.name, updatedGameMode);
+        this.#simulatedPlayer.addTag(Understudy.OWNERSHIP_TAG);
+        this.#isConnected = true;
+        this.updateNameTag();
+        this.#teleportFacing(location, dimension, rotation);
+        try {
+            this.#playerInfoSaver.loadInventoryAndProjectileOwnership();
+        } catch (error) {
+            if (error instanceof UnderstudySaveInfoError)
+                console.warn(`[Canopy] Failed to load player info for ${this.name}:`, error);
+            else
+                throw error;
+        }
+    }
+
+    adopt(simulatedPlayer) {
+        this.#assertNotConnected();
+        Understudies.onConnect();
+        this.#simulatedPlayer = simulatedPlayer;
+        this.#isConnected = true;
+        this.updateNameTag();
+    }
+
+    leave() {
+        this.#assertConnected();
+        this.savePlayerInfo();
+        this.#simulatedPlayer.remove();
+        this.#simulatedPlayer = void 0;
+        this.clearLookTarget();
+        this.#isConnected = false;
+        world.sendMessage({ translate: 'simplayer.leave.broadcast', with: [this.name] });
+    }
+
+    rejoin() {
+        this.#assertNotConnected();
+        const playerInfo = this.#playerInfoSaver.get();
+        this.join({
+            location: playerInfo.location,
+            rotation: playerInfo.rotation,
+            dimension: world.getDimension(playerInfo.dimensionId),
+            gameMode: playerInfo.gameMode
+        });
+    }
+
+    teleport({ location, dimension, rotation = { x: 0, y: 0 } }) {
+        this.#assertConnected();
+        this.#teleportFacing(location, dimension, rotation);
+        this.savePlayerInfo();
+    }
+
+    #teleportFacing(location, dimension, rotation) {
+        const facingLocation = getLookAtLocation(location, rotation);
+        this.#simulatedPlayer.teleport(location, { dimension, facingLocation, rotation });
+        this.#simulatedPlayer.lookAtLocation(facingLocation);
+    }
+
+    look(target) {
+        if (target instanceof Block) {
+            this.simulatedPlayer.lookAt(target);
+            this.#lookTarget = target;
+        } else if (target instanceof Entity) {
+            this.simulatedPlayer.lookAtEntity(target);
+            this.#lookTarget = target;
+        } else if (target instanceof Vector) {
+            this.simulatedPlayer.lookAtLocation(target);
+        } else {
+            const rotation = target;
+            this.simulatedPlayer.lookAtLocation(getLookAtLocation(this.simulatedPlayer.location, rotation));
+            this.simulatedPlayer.setRotation(rotation);
+        }
+    }
+
+    stopLooking() {
+        const target = this.lookTarget;
+        if (target === void 0)
+            return;
+        this.clearLookTarget();
+        if (target instanceof Player)
+            this.look(Vector.from(target.getHeadLocation()));
+        else if (target instanceof Block)
+            this.look(Vector.from(target.location));
+        else
+            this.look(Vector.from(target));
+    }
+
+    moveLocation(target) {
+        if (target instanceof Block)
+            this.simulatedPlayer.navigateToBlock(target);
+        else if (target instanceof Entity)
+            this.simulatedPlayer.navigateToEntity(target);
+        else
+            this.simulatedPlayer.navigateToLocation(target);
+    }
+
+    moveRelative(direction) {
+        const relativeDirectionMap = {
+            forward: [0, 1],
+            backward: [0, -1],
+            left: [1, 0],
+            right: [-1, 0]
+        };
+        const relativeDirection = relativeDirectionMap[direction];
+        if (!relativeDirection)
+            throw new Error(`[Canopy] Invalid relative movement direction: ${direction}`);
+        this.simulatedPlayer.moveRelative(...relativeDirection);
+    }
+
+    stopMoving() {
+        this.simulatedPlayer.stopMoving();
+    }
+
+    selectSlot(slotNumber) {
+        this.simulatedPlayer.selectedSlotIndex = slotNumber;
+    }
+
+    sprint(shouldSprint) {
+        this.simulatedPlayer.isSprinting = shouldSprint;
+    }
+
+    sneak(shouldSneak) {
+        this.simulatedPlayer.isSneaking = shouldSneak;
+    }
+
+    glide(shouldGlide) {
+        if (shouldGlide)
+            this.simulatedPlayer.glide();
+        else
+            this.simulatedPlayer.stopGliding();
+    }
+
+    stopAll() {
+        this.actions.clear();
+        this.stopMoving();
+        this.#simulatedPlayer.stopBuild();
+        this.#simulatedPlayer.stopInteracting();
+        this.#simulatedPlayer.stopBreakingBlock();
+        this.#simulatedPlayer.stopUsingItem();
+        this.#simulatedPlayer.stopSwimming();
+        this.#simulatedPlayer.stopGliding();
+        this.#simulatedPlayer.stopUsingItem();
+        this.sprint(false);
+        this.sneak(false);
+        this.clearLookTarget();
+        this.savePlayerInfo();
+    }
+
+    getInventory() {
+        const simulatedPlayer = this.simulatedPlayer;
+        const inventoryComponent = simulatedPlayer.getComponent(EntityComponentTypes.Inventory);
+        return inventoryComponent?.container;
+    }
+
+    getEquippable() {
+        return this.simulatedPlayer.getComponent(EntityComponentTypes.Equippable);
+    }
+
+    swapHeldItemWithPlayer(targetPlayer) {
+        const playerInvContainer = this.getInventory();
+        const targetInvContainer = targetPlayer.getComponent(EntityComponentTypes.Inventory)?.container;
+        try {
+            playerInvContainer.swapItems(this.#simulatedPlayer.selectedSlotIndex, targetPlayer.selectedSlotIndex, targetInvContainer);
+        } catch (error) {
+            targetPlayer.sendMessage({ translate: 'simplayer.swapheld.error', with: [error.name] });
+            console.warn(error);
+        }
+        this.refreshHeldItem();
+        this.savePlayerInfo();
+    }
+
+    refreshHeldItem() {
+        this.#simulatedPlayer.selectedSlotIndex = this.simulatedPlayer.selectedSlotIndex;
+    }
+
+    updateNameTag() {
+        this.simulatedPlayer.nameTag = this.nameTag;
+    }
+
+    #assertConnected() {
+        if (!this.isConnected())
+            throw new UnderstudyNotConnectedError(this.name);
+    }
+
+    #assertNotConnected() {
+        if (this.isConnected())
+            throw new UnderstudyConnectedError(this.name);
+    }
+
+    #isInLoadedChunk() {
+        const simulatedPlayer = this.#simulatedPlayer;
+        return simulatedPlayer.dimension.isChunkLoaded(simulatedPlayer.location);
+    }
+
+    #sendUnloadedMessage() {
+        world.sendMessage({ translate: 'simplayer.unexpectedunload', with: [this.name] });
+    }
+}
+
+export default Understudy;
